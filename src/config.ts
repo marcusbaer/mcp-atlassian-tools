@@ -30,6 +30,10 @@ export type ServerConfig = {
     bearerToken: string;
     spacesFilter: string[];
     sslVerify: boolean;
+    jiraUrl?: string;
+    jiraBearerToken?: string;
+    jiraProjectsFilter: string[];
+    jiraSslVerify: boolean;
 };
 
 export function getConfig(): ServerConfig {
@@ -39,6 +43,10 @@ export function getConfig(): ServerConfig {
     const bearerToken = process.env.CONFLUENCE_BEARER_TOKEN;
     const spacesFilterRaw = process.env.CONFLUENCE_SPACES_FILTER ?? '';
     const sslVerify = parseBool(process.env.CONFLUENCE_SSL_VERIFY, true);
+    const jiraUrl = process.env.JIRA_URL;
+    const jiraBearerToken = process.env.JIRA_BEARER_TOKEN;
+    const jiraProjectsFilterRaw = process.env.JIRA_PROJECTS_FILTER ?? '';
+    const jiraSslVerify = parseBool(process.env.JIRA_SSL_VERIFY, true);
 
     if (!baseUrl) {
         throw new Error('Missing required environment variable CONFLUENCE_BASE_URL');
@@ -56,5 +64,12 @@ export function getConfig(): ServerConfig {
             .map((v) => v.trim())
             .filter(Boolean),
         sslVerify,
+        jiraUrl: jiraUrl ? normalizeBaseUrl(jiraUrl) : undefined,
+        jiraBearerToken,
+        jiraProjectsFilter: jiraProjectsFilterRaw
+            .split(',')
+            .map((v) => v.trim())
+            .filter(Boolean),
+        jiraSslVerify,
     };
 }

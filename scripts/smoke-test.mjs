@@ -18,6 +18,9 @@ async function run() {
   const hasListSpaces = tools.tools.some(
     (tool) => tool.name === "list_confluence_spaces",
   );
+  const hasJiraSearch = tools.tools.some(
+    (tool) => tool.name === "search_jira_issues",
+  );
 
   if (!hasListSpaces) {
     throw new Error("Tool list_confluence_spaces is not registered");
@@ -38,10 +41,38 @@ async function run() {
   const parsed = JSON.parse(textPart.text);
   const resultCount = Array.isArray(parsed.results) ? parsed.results.length : 0;
 
+  let jiraResult = null;
+  if (hasJiraSearch) {
+    const jiraIssues = await client.callTool({
+      name: "search_jira_issues",
+      arguments: { maxResults: 3 },
+    });
+
+    const jiraText = jiraIssues.content.find((c) => c.type === "text");
+    if (!jiraText || typeof jiraText.text !== "string") {
+      throw new Error("Unexpected tool response format for search_jira_issues");
+    }
+
+    const jiraParsed = JSON.parse(jiraText.text);
+    jiraResult = {
+      total: jiraParsed.total ?? null,
+      returnedResults: Array.isArray(jiraParsed.issues)
+        ? jiraParsed.issues.length
+        : 0,
+      firstIssue: jiraParsed.issues?.[0]
+        ? {
+            key: jiraParsed.issues[0].key,
+            summary: jiraParsed.issues[0].fields?.summary ?? null,
+          }
+        : null,
+    };
+  }
+
   console.log(
     JSON.stringify(
       {
         toolRegistered: true,
+        jiraToolsRegistered: hasJiraSearch,
         total: parsed.size ?? parsed.totalSize ?? null,
         returnedResults: resultCount,
         firstResult: parsed.results?.[0]
@@ -52,6 +83,7 @@ async function run() {
               status: parsed.results[0].status,
             }
           : null,
+        jira: jiraResult,
       },
       null,
       2,

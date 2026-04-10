@@ -1,4 +1,4 @@
-# mcp-atlassian
+# mcp-atlassian-tools
 
 Node.js MCP server for Confluence (Data Center/Server) using Bearer token authentication and JIRA.
 

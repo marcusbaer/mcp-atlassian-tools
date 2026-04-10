@@ -25,7 +25,31 @@ Optional Jira tools:
 - `list_jira_issue_comments`
 - `list_jira_issue_transitions`
 
-## Configuration
+## Usage with npm
+
+The server uses stdio transport and can be wired e.g. into VS Code MCP config.
+
+Define the MCP tool in your client, e.g. like this:
+
+```json
+"mcp-atlassian-tools": {
+    "command": "npx",
+    "args": ["-y", "mcp-atlassian-tools"],
+    "env": {
+        "CONFLUENCE_BASE_URL": "",
+        "CONFLUENCE_BEARER_TOKEN": "",
+        "CONFLUENCE_SPACES_FILTER": "",
+        "JIRA_URL": "",
+        "JIRA_BEARER_TOKEN": ""
+    }
+}
+```
+
+Make sure to enable the tools, if needed.
+
+## Local Usage
+
+### Configuration
 
 Create a `.env` file in this project root:
 
@@ -43,12 +67,10 @@ CONFLUENCE_SSL_VERIFY=true
 # JIRA_PROJECTS_FILTER=PROJ,TEAM
 ```
 
-## Run
+### Run
 
 ```bash
 npm install
 npm run build
 npm start
 ```
-
-The server uses stdio transport and can be wired e.g. into VS Code MCP config.

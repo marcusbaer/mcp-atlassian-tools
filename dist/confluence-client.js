@@ -107,7 +107,7 @@ export class ConfluenceClient {
             type: 'page',
             title: title,
             version: {
-                number: version + 1,
+                number: version,
                 minorEdit: minorEdit,
             },
             body: {

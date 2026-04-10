@@ -1,7 +1,7 @@
 {
-  "name": "mcp-atlassian",
+  "name": "mcp-atlassian-tools",
   "version": "0.1.0",
-  "description": "MCP Server for Confluence (Bearer Token)",
+  "description": "MCP Server for Confluence and JIRA (Bearer Token)",
   "type": "module",
   "main": "dist/index.js",
   "bin": {

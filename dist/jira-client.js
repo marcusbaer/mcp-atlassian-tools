@@ -71,4 +71,40 @@ export class JiraClient {
         const response = await this.client.get(`/rest/api/2/issue/${encodeURIComponent(issueKey)}/transitions`);
         return response.data;
     }
+    async createIssue(fields) {
+        const response = await this.client.post('/rest/api/2/issue', { fields });
+        return response.data;
+    }
+    async updateIssue(issueKey, fields) {
+        const response = await this.client.put(`/rest/api/2/issue/${encodeURIComponent(issueKey)}`, { fields });
+        return response.data;
+    }
+    async transitionIssue(issueKey, transitionId, comment) {
+        const data = {
+            transition: { id: transitionId },
+        };
+        if (comment) {
+            data.update = {
+                comment: [
+                    {
+                        add: { body: comment },
+                    },
+                ],
+            };
+        }
+        const response = await this.client.post(`/rest/api/2/issue/${encodeURIComponent(issueKey)}/transitions`, data);
+        return response.data;
+    }
+    async addComment(issueKey, comment, visibility) {
+        const data = { body: comment };
+        if (visibility) {
+            data.visibility = visibility;
+        }
+        const response = await this.client.post(`/rest/api/2/issue/${encodeURIComponent(issueKey)}/comment`, data);
+        return response.data;
+    }
+    async deleteIssue(issueKey) {
+        await this.client.delete(`/rest/api/2/issue/${encodeURIComponent(issueKey)}`);
+        return { success: true, message: `Issue ${issueKey} deleted` };
+    }
 }

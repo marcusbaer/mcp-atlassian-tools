@@ -84,4 +84,68 @@ export class ConfluenceClient {
         const response = await this.client.get('/rest/api/user/current');
         return response.data;
     }
+    async createPage(spaceKey, title, body, parentPageId) {
+        const data = {
+            type: 'page',
+            title: title,
+            space: { key: spaceKey },
+            body: {
+                storage: {
+                    value: body,
+                    representation: 'storage',
+                },
+            },
+        };
+        if (parentPageId) {
+            data.ancestors = [{ id: parentPageId }];
+        }
+        const response = await this.client.post('/rest/api/content', data);
+        return response.data;
+    }
+    async updatePage(pageId, title, body, version, minorEdit = false) {
+        const data = {
+            type: 'page',
+            title: title,
+            version: {
+                number: version + 1,
+                minorEdit: minorEdit,
+            },
+            body: {
+                storage: {
+                    value: body,
+                    representation: 'storage',
+                },
+            },
+        };
+        const response = await this.client.put(`/rest/api/content/${encodeURIComponent(pageId)}`, data);
+        return response.data;
+    }
+    async deletePage(pageId) {
+        await this.client.delete(`/rest/api/content/${encodeURIComponent(pageId)}`);
+        return { success: true, message: `Page ${pageId} deleted` };
+    }
+    async addLabel(pageId, labels) {
+        const data = {
+            labels: labels.map((label) => ({ name: label })),
+        };
+        const response = await this.client.post(`/rest/api/content/${encodeURIComponent(pageId)}/label`, data);
+        return response.data;
+    }
+    async addComment(pageId, comment) {
+        const data = {
+            type: 'comment',
+            container: {
+                id: pageId,
+                type: 'page',
+            },
+            body: {
+                storage: {
+                    value: comment,
+                    representation: 'storage',
+                },
+            },
+        };
+        const response = await this.client.post('/rest/api/content', data);
+        return response.data;
+    }
 }

@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "mcp-atlassian": "./dist/index.js"
+    "mcp-atlassian": "dist/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
